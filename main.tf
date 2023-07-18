@@ -7,9 +7,9 @@ terraform {
   }
 }
 
-variable "aiven_api_token" {}
+#variable "aiven_api_token" {}
 
-variable "aiven_project_name" {}
+#variable "aiven_project_name" {}
 
 provider "aiven" {
   api_token = var.aiven_api_token
