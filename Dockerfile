@@ -1,17 +1,23 @@
-# Use the hashicorp/terraform base image
-FROM hashicorp/terraform
+# Use the official Debian-based Docker image
+FROM debian:buster-slim
 
 # Set the working directory
 WORKDIR /app
-
-# Copy the Terraform configuration files to the container
 COPY . /app
+ADD start.sh /
+RUN chmod +x /start.sh
+# Install dependencies
+RUN apt-get update && apt-get install -y curl unzip
 
-# Initialize Terraform
-RUN terraform init
+# Download and install Terraform
+ARG TERRAFORM_VERSION=0.15.5
+RUN curl -LO "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip" && \
+    unzip "terraform_${TERRAFORM_VERSION}_linux_amd64.zip" -d /usr/local/bin && \
+    rm "terraform_${TERRAFORM_VERSION}_linux_amd64.zip"
 
-# Perform a Terraform plan
-RUN terraform plan -out=tfplan
+# Verify Terraform installation
+RUN terraform version
 
-# Perform a Terraform apply
-RUN terraform apply -auto-approve tfplan
+
+
+CMD ["/start.sh"]
